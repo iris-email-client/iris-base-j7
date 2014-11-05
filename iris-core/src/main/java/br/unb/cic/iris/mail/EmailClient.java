@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.mail.search.SearchTerm;
 
-import br.unb.cic.iris.core.exception.DBException;
 import br.unb.cic.iris.core.exception.EmailException;
 import br.unb.cic.iris.core.model.EmailMessage;
 import br.unb.cic.iris.core.model.IrisFolder;
@@ -35,20 +34,17 @@ public class EmailClient implements IEmailClient {
 	@Override
 	public void send(EmailMessage email) throws EmailException {
 		System.out.println("send message: " + email);
-		
-		//TODO: I think this would be necessary in the case 
-		//where the AddressBook feature is enabled. 
-		
-		//email.setTo(findAddress(email.getTo());
-		//email.setCc(findAddress(email.getCc());
-		//email.setBcc(findAddress(email.getBccc());
+			
+		email.setTo(findAddress(email.getTo()));
+		//email.setCc(findAddress(email.getCc()));
+		//email.setBcc(findAddress(email.getBcc()));
 		
 		sender.send(email);
 	}
 
-	private String findAddress(String email) throws DBException {
-		if(email != null && ! EmailValidator.validate(email)){
-			return (AddressBookDAO.instance().find(email)).getAddress();
+	private String findAddress(String email) throws EmailException {
+		if(email != null && !EmailValidator.validate(email)){
+			return AddressBookDAO.instance().find(email).getAddress();
 		}
 		return email;
 	}
